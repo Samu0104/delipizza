@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho de Compras</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Open+Sans&display=swap" rel="stylesheet">
+    <style>
+        /* Adicione seu estilo aqui */
+    </style>
+</head>
+<body>
+    <h1>Carrinho de Compras</h1>
+    {% if itens %}
+        <ul>
+            {% for item in itens %}
+                <li>{{ item.tipo }}: ID {{ item.item_id }}</li>
+            {% endfor %}
+        </ul>
+        <button onclick="finalizarCompra()">Finalizar Compra</button>
+    {% else %}
+        <p>Seu carrinho está vazio.</p>
+    {% endif %}
+</body>
+</html>

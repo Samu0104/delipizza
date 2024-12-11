@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Finalizar Compra</h1>
+        <div id="resumo-compra">
+            <h2>Resumo da Compra</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Tipo</th>
+                        <th>Preço</th>
+                    </tr>
+                </thead>
+                <tbody id="itens-carrinho">
+                    <!-- Os itens do carrinho serão inseridos aqui via JavaScript -->
+                </tbody>
+            </table>
+            <h3>Total: R$ <span id="total-compra">0.00</span></h3>
+        </div>
+        <button id="btn-finalizar" class="btn btn-success">Finalizar Compra</button>
+        <div id="mensagem" class="mt-3"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Função para carregar os itens do carrinho
+            function carregarCarrinho() {
+                $.get('/carrinho', function(data) {
+                    let total = 0;
+                    $('#itens-carrinho').empty(); // Limpa a tabela antes de adicionar os itens
+                    data.itens.forEach(function(item) {
+                        let preco = 0;
+                        if (item.tipo === 'pizza') {
+                            preco = item.preco_p; // Supondo que você tenha o preço da pizza
+                        } else if (item.tipo === 'sobremesa') {
+                            preco = item.preco; // Supondo que você tenha o preço da sobremesa
+                        } else if (item.tipo === 'bebida') {
+                            preco = item.preco; // Supondo que você tenha o preço da bebida
+                        }
+                        total += preco;
+                        $('#itens-carrinho').append(`
+                            <tr>
+                                <td>${item.nome}</td>
+                                <td>${item.tipo}</td>
+                                <td>R$ ${preco.toFixed(2)}</td>
+                            </tr>
+                        `);
+                    });
+                    $('#total-compra').text(total.toFixed(2));
+                });
+            }
+
+            // Carregar os itens do carrinho ao abrir a página
+            carregarCarrinho();
+
+            // Função para finalizar a compra
+            $('#btn-finalizar').click(function() {
+                $.post('/compra', function(data) {
+                    if (data.status === 'success') {
+                        $('#mensagem').html(`<div class="alert alert-success">${data.message}</div>`);
+                        // Redirecionar ou limpar o carrinho, se necessário
+                    } else {
+                        $('#mensagem').html(`<div class="alert alert-danger">${data.message}</div>`);
+                    }
+                }).fail(function() {
+                    $('#mensagem').html(`<div class="alert alert-danger">Erro ao finalizar a compra.</div>`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

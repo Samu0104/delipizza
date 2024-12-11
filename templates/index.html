@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzaria Delícia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            background-color: #b22222; 
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        nav h1 {
+            color: white;
+            font-size: 20px;
+        }
+        
+        header {
+            background-color: green;
+            color: white;
+            text-align: center;
+            padding: 70px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 45px;
+        }
+        main {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .pizza-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .pizza-card {
+            background-color: white;
+            border: 2px solid red;
+            border-radius: 10px;
+            width: 250px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .pizza-card h3 {
+            color: green;
+            margin: 10px 0;
+        }
+        .pizza-card p {
+            color: red;
+            margin: 5px 0;
+        }
+        .pizza-card button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .pizza-card button:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>Delipizzas</h1>
+        <div>
+            <a href="/login">Login</a>
+            <a href="/carrinho">Carrinho</a>
+            <a href="/cadastrar">Cadastrar</a>
+        </div>
+    </nav>
+
+    <header>
+        <h1>Bem-vindo à Pizzaria Delícia!</h1>
+        <p>As melhores pizzas da cidade esperam por você!</p>
+    </header>
+    <main>
+        <h2>Nosso Cardápio</h2>
+        <div class="pizza-container">
+            <div class="pizza-card">
+                <h3>Pizza Marguerita</h3>
+                <p >R$ 30,00</p>
+                <button>Adicionarao carrinho</button>
+            </div>
+            <div class="pizza-card">
+                <h3>Pizza Calabresa</h3>
+                <p>R$ 35,00</p>
+                <button>Adicionarao carrinho</button>
+            </div>
+            <div class="pizza-card">
+                <h3>Pizza Quatro Queijos</h3>
+                <p>R$ 40,00</p>
+                <button>Adicionarao carrinho</button>
+            </div>
+            <div class="pizza-card">
+                <h3>Pizza Pepperoni</h3>
+                <p>R$ 45,00</p>
+                <button>Adicionarao carrinho</button>
+            </div>
+        </div>
+    </main>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const buttons = document.querySelectorAll('.pizza-card button');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const pizzaName = button.parentElement.querySelector('h3').textContent;
+                const pizzaPrice = button.parentElement.querySelector('p').textContent.replace('R$ ', '').replace(',', '.'); // Remove "R$ " e substitui vírgula por ponto
+
+                fetch('/adicionar_ao_carrinho', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nome: pizzaName, preco: parseFloat(pizzaPrice) })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(`Você adicionou ${pizzaName} ao carrinho!`);
+                    } else {
+                        alert(`Erro: ${data.message}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                });
+            });
+        });
+    });
+</script>
+</html>
